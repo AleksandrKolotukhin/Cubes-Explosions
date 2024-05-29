@@ -5,7 +5,12 @@ public class CubeExplosion : MonoBehaviour
     [SerializeField] private float _splitChance = 1f;
     [SerializeField] private float _explosionForce = 500f;
 
-    void OnMouseDown()
+    private void SetSplitChance(float value)
+    {
+        _splitChance = value;
+    }
+
+    private void OnMouseDown()
     {
         if (Random.value < _splitChance)
         {
@@ -13,18 +18,17 @@ public class CubeExplosion : MonoBehaviour
 
             for (int i = 0; i < newCubesCount; i++)
             {
-                GameObject spawnedCube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                GameObject spawnedCube = Instantiate(gameObject, transform.position, Quaternion.identity);
 
                 spawnedCube.transform.localScale = transform.localScale / 2;
-                spawnedCube.transform.position = transform.position;
 
-                Rigidbody rigidbody = spawnedCube.AddComponent<Rigidbody>();
+                Rigidbody rigidbody = spawnedCube.GetComponent<Rigidbody>();
 
                 rigidbody.AddForce(Physics.gravity);
                 rigidbody.AddExplosionForce(_explosionForce, transform.position, 5);
 
                 spawnedCube.GetComponent<Renderer>().material.color = new Color(Random.value, Random.value, Random.value);
-                spawnedCube.AddComponent<CubeExplosion>()._splitChance = _splitChance / 2;
+                spawnedCube.GetComponent<CubeExplosion>().SetSplitChance(_splitChance / 2);
             }
         }
 
